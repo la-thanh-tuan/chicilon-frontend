@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home.component';
-import { Routes } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
 
 export const homeRoutes: Routes = [
   { path: '', redirectTo: 'index', pathMatch: 'full' },
@@ -9,7 +9,8 @@ export const homeRoutes: Routes = [
 ]
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
+    RouterModule.forChild(homeRoutes)
   ],
   declarations: [HomeComponent]
 })
