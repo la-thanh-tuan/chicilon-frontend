@@ -31,8 +31,8 @@ export class DataService {
   delete(uri: string, key: string, id: string) {
     this.headers.delete("Authorization");
     this.headers.append("Authorization", "Bearer " + this._authenService.getLoggedInUser().access_token);
-    /**return this._http.delete(SystemConstants.BASE_API + uri, "/?" + key + "=" + id, { headers: this.headers }).map(this.extractData);**/
-  }
+    return this._http.delete(SystemConstants.BASE_API + uri + "/?" + key + "=" + id, { headers: this.headers })
+      .map(this.extractData);  }
   postFile(uri: string, data?: any) {
     let newHeader = new Headers();
     newHeader.append("Authorization", "Bearer " + this._authenService.getLoggedInUser().access_token);
@@ -41,5 +41,21 @@ export class DataService {
   private extractData(res: Response) {
     let body = res.json();
     return body || {};
+
   }
+  public handleError(error: any) {
+    if (error.status == 401) {
+        localStorage.removeItem(SystemConstants.CURRENT_USER);
+        this._notificationService.printErrorMessage(MessageContstants.LOGIN_AGAIN_MSG);
+        this._utilityService.navigateToLogin();
+    }
+    else {
+        let errMsg = (error.message) ? error.message :
+            error.status ? `${error.status} - ${error.statusText}` : 'Lỗi hệ thống';
+        this._notificationService.printErrorMessage(errMsg);
+
+        return Observable.throw(errMsg);
+    }
+
+}
 }
